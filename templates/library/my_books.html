@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block title %}My Books — LibraryMaster{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h4>{% if user.role == 'admin' %}All Issues{% else %}My Books{% endif %}</h4>
+  <p>Your currently issued books and return history</p>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="card p-3">
+      <div class="section-label text-primary"><i class="bi bi-bookmark-check-fill me-1"></i>Currently Issued</div>
+      {% for i in active %}
+      <div class="d-flex justify-content-between align-items-start p-3 rounded mb-2 bg-dark border border-secondary">
+        <div>
+          <div class="fw-semibold small mb-1">{{ i.book.title }}</div>
+          {% if user.role == 'admin' %}
+            <div class="text-primary mb-1" style="font-size:0.78rem;"><i class="bi bi-person me-1"></i>{{ i.user.username }}</div>
+          {% else %}
+            <div class="text-secondary mb-2" style="font-size:0.78rem;">by {{ i.book.author }}</div>
+          {% endif %}
+          <div class="d-flex gap-3 flex-wrap">
+            <small class="text-secondary"><i class="bi bi-calendar3 me-1"></i>Issued {{ i.issue_date }}</small>
+            <small class="{% if i.is_overdue %}text-danger fw-semibold{% else %}text-secondary{% endif %}">
+              <i class="bi bi-clock me-1"></i>Due {{ i.due_date }}
+              {% if i.is_overdue %}<span class="badge bg-danger ms-1">Overdue</span>{% endif %}
+            </small>
+          </div>
+        </div>
+        <form method="POST" action="{% url 'return_book' i.id %}" class="ms-3 flex-shrink-0">
+          {% csrf_token %}
+          <button class="btn btn-danger btn-sm"><i class="bi bi-arrow-return-left me-1"></i>Return</button>
+        </form>
+      </div>
+      {% empty %}
+      <div class="empty-state">
+        <i class="bi bi-inbox"></i>
+        <p>No books currently issued.</p>
+        {% if user.role != 'admin' %}
+          <a href="{% url 'book_list' %}" class="btn btn-primary btn-sm mt-2">Browse Books</a>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card p-3">
+      <div class="section-label"><i class="bi bi-clock-history me-1"></i>Return History</div>
+      {% for i in history %}
+      <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-secondary">
+        <div>
+          <div class="small fw-500">{{ i.book.title }}</div>
+          {% if user.role == 'admin' %}
+            <small class="text-primary">{{ i.user.username }}</small>
+          {% endif %}
+          <small class="text-secondary d-block">Returned {{ i.return_date }}</small>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          {% if i.fine > 0 %}
+            <span class="badge {% if i.fine_paid %}bg-success{% else %}bg-warning text-dark{% endif %}">₹{{ i.fine }}</span>
+            {% if user.role == 'admin' and not i.fine_paid %}
+            <form method="POST" action="{% url 'mark_fine_paid' i.id %}">
+              {% csrf_token %}
+              <button class="btn btn-success btn-sm py-0 px-2"><i class="bi bi-check2 me-1"></i>Mark Paid</button>
+            </form>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+      {% empty %}
+      <div class="empty-state" style="padding:24px 0;">
+        <i class="bi bi-clock-history"></i>
+        <p>No history yet.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

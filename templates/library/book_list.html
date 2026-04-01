@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}Books — LibraryMaster{% endblock %}
+{% block content %}
+
+<div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+  <div>
+    <h4>{% if user.role == 'admin' %}Book Catalogue{% else %}Browse Books{% endif %}</h4>
+    <p>{% if user.role == 'admin' %}Manage the full collection{% else %}Find and issue books from the library{% endif %}</p>
+  </div>
+  {% if user.role == 'admin' %}
+  <a href="{% url 'add_book' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>Add Book</a>
+  {% endif %}
+</div>
+
+<form method="GET" class="d-flex gap-2 mb-4" style="max-width:400px;">
+  <div class="input-group">
+    <span class="input-group-text bg-dark border-secondary"><i class="bi bi-search text-secondary"></i></span>
+    <input name="q" value="{{ query }}" class="form-control" placeholder="Search title or author...">
+  </div>
+  <button class="btn btn-primary btn-sm">Search</button>
+  {% if query %}<a href="{% url 'book_list' %}" class="btn btn-outline-secondary btn-sm">Clear</a>{% endif %}
+</form>
+
+<div class="row g-3">
+  {% for book in books %}
+  <div class="col-sm-6 col-lg-4 col-xl-3">
+    <div class="card book-card p-3 h-100 d-flex flex-column">
+      <div class="book-top-bar"></div>
+      <div class="fw-semibold small mb-1">{{ book.title }}</div>
+      <div class="text-secondary mb-2" style="font-size:0.78rem;"><i class="bi bi-person me-1"></i>{{ book.author }}</div>
+      <div class="d-flex gap-1 flex-wrap mb-3">
+        <span class="badge bg-secondary">{{ book.genre }}</span>
+        {% if book.quantity > 0 %}
+          <span class="badge bg-success">{{ book.quantity }} available</span>
+        {% else %}
+          <span class="badge bg-danger">Out of stock</span>
+        {% endif %}
+      </div>
+
+      <div class="d-flex gap-2 mt-auto flex-wrap">
+        {% if user.role == 'admin' %}
+          <a href="{% url 'edit_book' book.id %}" class="btn btn-outline-secondary btn-sm flex-grow-1"><i class="bi bi-pencil me-1"></i>Edit</a>
+          <form method="POST" action="{% url 'delete_book' book.id %}" onsubmit="return confirm('Delete {{ book.title }}?')">
+            {% csrf_token %}
+            <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
+          </form>
+        {% else %}
+          {% if book.id in user_issued_ids %}
+            <a href="{% url 'my_books' %}" class="btn btn-warning btn-sm flex-grow-1"><i class="bi bi-arrow-return-left me-1"></i>Return</a>
+          {% elif book.quantity > 0 %}
+            <a href="{% url 'issue_book' book.id %}" class="btn btn-primary btn-sm flex-grow-1"><i class="bi bi-book me-1"></i>Issue</a>
+          {% elif book.id not in user_reserved_ids %}
+            <a href="{% url 'reserve_book' book.id %}" class="btn btn-outline-warning btn-sm flex-grow-1"><i class="bi bi-bookmark me-1"></i>Reserve</a>
+          {% else %}
+            <span class="badge bg-warning text-dark p-2 flex-grow-1 text-center"><i class="bi bi-bookmark-check me-1"></i>Reserved</span>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12">
+    <div class="card p-5 empty-state">
+      <i class="bi bi-search"></i>
+      <p>No books found{% if query %} for "{{ query }}"{% endif %}.</p>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% if books.has_other_pages %}
+<nav class="mt-4">
+  <ul class="pagination justify-content-center">
+    {% if books.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ books.previous_page_number }}&q={{ query }}"><i class="bi bi-chevron-left"></i></a></li>
+    {% endif %}
+    <li class="page-item disabled"><span class="page-link">{{ books.number }} / {{ books.paginator.num_pages }}</span></li>
+    {% if books.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ books.next_page_number }}&q={{ query }}"><i class="bi bi-chevron-right"></i></a></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Reservations — LibraryMaster{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h4>{% if user.role == 'admin' %}All Reservations{% else %}My Reservations{% endif %}</h4>
+  <p>{% if user.role == 'admin' %}All active book reservations{% else %}Books you've reserved{% endif %}</p>
+</div>
+
+<div class="col-lg-7 px-0">
+  <div class="card p-3">
+    <div class="section-label text-primary"><i class="bi bi-bookmark-star-fill me-1"></i>Active Reservations</div>
+    {% for r in res %}
+    <div class="d-flex justify-content-between align-items-center p-3 rounded mb-2 bg-dark border border-secondary">
+      <div>
+        <div class="fw-semibold small mb-1">{{ r.book.title }}</div>
+        {% if user.role == 'admin' %}
+          <div class="text-primary mb-1" style="font-size:0.78rem;"><i class="bi bi-person me-1"></i>{{ r.user.username }}</div>
+        {% else %}
+          <div class="text-secondary mb-1" style="font-size:0.78rem;">by {{ r.book.author }}</div>
+        {% endif %}
+        <div class="d-flex gap-3 flex-wrap">
+          <small class="text-secondary"><i class="bi bi-calendar3 me-1"></i>{{ r.reserved_at|date:"d M Y" }}</small>
+          {% if r.expires_at %}
+          <small class="text-warning"><i class="bi bi-hourglass-split me-1"></i>Expires {{ r.expires_at|date:"d M Y" }}</small>
+          {% endif %}
+        </div>
+      </div>
+      {% if user.role != 'admin' %}
+      <form method="POST" action="{% url 'cancel_reservation' r.id %}" class="ms-3 flex-shrink-0"
+            onsubmit="return confirm('Cancel reservation for {{ r.book.title }}?')">
+        {% csrf_token %}
+        <button class="btn btn-outline-danger btn-sm"><i class="bi bi-x-lg me-1"></i>Cancel</button>
+      </form>
+      {% endif %}
+    </div>
+    {% empty %}
+    <div class="empty-state">
+      <i class="bi bi-bookmark-x"></i>
+      <p>No active reservations.</p>
+      {% if user.role != 'admin' %}
+        <a href="{% url 'book_list' %}" class="btn btn-primary btn-sm mt-2">Browse Books</a>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

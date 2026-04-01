@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}{% if edit %}Edit{% else %}Add{% endif %} Book — LibraryMaster{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h4>{% if edit %}Edit Book{% else %}Add New Book{% endif %}</h4>
+  <p>{% if edit %}Update the book details{% else %}Add a new book to the catalogue{% endif %}</p>
+</div>
+
+<div class="col-md-6 col-lg-5 px-0">
+  <div class="card p-4">
+    <form method="POST">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="mb-3">
+        <label class="form-label">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+          <div class="text-danger mt-1" style="font-size:0.78rem;">
+            <i class="bi bi-exclamation-circle me-1"></i>{{ field.errors.0 }}
+          </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+      <hr class="border-secondary">
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary flex-grow-1">
+          <i class="bi bi-check-lg me-1"></i>{% if edit %}Update Book{% else %}Add to Catalogue{% endif %}
+        </button>
+        <a href="{% url 'book_list' %}" class="btn btn-outline-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

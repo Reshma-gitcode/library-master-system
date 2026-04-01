@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign In — LibraryMaster</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family:'Inter',sans-serif; background:#0d1117; min-height:100vh; }
+    .auth-left { background:#0d1117; border-right:1px solid rgba(255,255,255,0.07); min-height:100vh; }
+    .auth-right { background:#161b22; min-height:100vh; }
+    .brand-icon { width:44px;height:44px;border-radius:11px;background:linear-gradient(135deg,#3b82f6,#60a5fa);display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 0 20px rgba(59,130,246,0.4); }
+    .feature-item { background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:9px;padding:10px 14px;font-size:0.83rem;color:#7d8590; }
+    .form-control { background:#0d1117 !important; border-color:rgba(255,255,255,0.1); color:#e6edf3 !important; }
+    .form-control:focus { border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,0.15); }
+    .btn-signin { background:linear-gradient(135deg,#2563eb,#3b82f6);border:none;box-shadow:0 0 20px rgba(59,130,246,0.3); }
+    .btn-signin:hover { opacity:0.9; }
+  </style>
+</head>
+<body>
+<div class="container-fluid p-0">
+  <div class="row g-0">
+
+    <div class="col-lg-6 auth-left d-none d-lg-flex flex-column justify-content-center align-items-center p-5">
+      <div class="d-flex align-items-center gap-3 mb-5">
+        <div class="brand-icon">📚</div>
+        <span class="fw-bold fs-5">LibraryMaster</span>
+      </div>
+      <h2 class="fw-bold mb-2 text-center">Manage your library smarter</h2>
+      <p class="text-secondary text-center mb-4" style="max-width:280px;">A professional system for librarians and students.</p>
+      <div class="d-flex flex-column gap-2 w-100" style="max-width:300px;">
+        <div class="feature-item"><i class="bi bi-check-circle-fill text-primary me-2"></i>Issue &amp; return books instantly</div>
+        <div class="feature-item"><i class="bi bi-check-circle-fill text-primary me-2"></i>Reserve books when out of stock</div>
+        <div class="feature-item"><i class="bi bi-check-circle-fill text-primary me-2"></i>Automatic fine calculation</div>
+        <div class="feature-item"><i class="bi bi-check-circle-fill text-primary me-2"></i>Admin dashboard for librarians</div>
+      </div>
+    </div>
+
+    <div class="col-lg-6 auth-right d-flex align-items-center justify-content-center p-4">
+      <div style="width:100%;max-width:380px;">
+        <h4 class="fw-bold mb-1">Welcome back</h4>
+        <p class="text-secondary mb-4" style="font-size:0.875rem;">Sign in to your account to continue</p>
+
+        {% if form.errors %}
+        <div class="alert alert-danger d-flex align-items-center gap-2 py-2">
+          <i class="bi bi-exclamation-circle-fill"></i> Invalid username or password.
+        </div>
+        {% endif %}
+
+        <form method="POST">
+          {% csrf_token %}
+          {% for field in form %}
+          <div class="mb-3">
+            <label class="form-label text-secondary" style="font-size:0.82rem;">{{ field.label }}</label>
+            <input type="{{ field.field.widget.input_type }}"
+                   name="{{ field.html_name }}"
+                   class="form-control"
+                   {% if field.value %}value="{{ field.value }}"{% endif %}
+                   placeholder="Enter your {{ field.label|lower }}">
+          </div>
+          {% endfor %}
+          <button type="submit" class="btn btn-primary btn-signin w-100 mt-1 fw-semibold">Sign In</button>
+        </form>
+
+        <p class="text-center mt-4 text-secondary" style="font-size:0.85rem;">
+          No account? <a href="{% url 'register' %}" class="text-primary text-decoration-none fw-500">Create one</a>
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
