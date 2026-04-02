@@ -91,7 +91,7 @@ class IssueBook(models.Model):
 
     def calculate_fine(self):
         """
-        Calculate the overdue fine based on return date (or today if not yet returned).
+        Calculate the overdue fine based on return date.
         Returns 0 if the book was returned on time.
         """
         check_date = self.return_date or now().date()

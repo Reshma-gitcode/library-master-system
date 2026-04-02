@@ -12,12 +12,7 @@ from .models import User
 
 
 class RegisterForm(forms.ModelForm):
-    """
-    Student self-registration form.
-
-    Note: Role is always set to "student" in the view.
-    Librarian accounts must be created via the create_librarian command.
-    """
+   
 
     password = forms.CharField(
         label="Password",
