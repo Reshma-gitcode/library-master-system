@@ -3,7 +3,6 @@ accounts/views.py - Authentication views for LibraryMaster
 
 Handles student self-registration.
 Login and logout are handled by Django's built-in auth views.
-Author: Library Dev Team
 """
 
 from django.shortcuts import render, redirect

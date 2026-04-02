@@ -2,7 +2,6 @@
 library/urls.py - URL routing for the library app
 
 Maps URLs to view functions for all book-related operations.
-Author: Library Dev Team
 """
 
 from django.urls import path

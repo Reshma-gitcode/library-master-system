@@ -1,9 +1,6 @@
 """
 accounts/models.py - Custom user model for LibraryMaster
 
-Extends Django's AbstractUser to add a role field
-that distinguishes between librarians and students.
-Author: Library Dev Team
 """
 
 from django.contrib.auth.models import AbstractUser

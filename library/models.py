@@ -4,7 +4,6 @@ library/models.py
 Data models for the LibraryMaster application.
 Defines Book, IssueBook, and Reservation entities.
 
-Author: Library Dev Team
 """
 
 from django.db import models

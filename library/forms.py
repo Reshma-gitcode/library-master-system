@@ -2,7 +2,6 @@
 library/forms.py - Forms for book management
 
 Provides form validation for adding and editing books.
-Author: Library Dev Team
 """
 
 from django import forms

@@ -3,7 +3,6 @@ accounts/forms.py - Registration form for students
 
 Handles new student account creation with password confirmation
 and duplicate email validation.
-Author: Library Dev Team
 """
 
 from django import forms
