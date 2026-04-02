@@ -86,7 +86,10 @@ def issue_book(request, book_id):
 
 @login_required
 def return_book(request, issue_id):
-    issue = get_object_or_404(IssueBook, id=issue_id, return_date=None)
+    issue = get_object_or_404(IssueBook, id=issue_id)
+    if issue.return_date is not None:
+        messages.warning(request, "This book has already been returned.")
+        return redirect('my_books')
     if not is_admin(request.user) and issue.user != request.user:
         messages.error(request, "You can only return your own books.")
         return redirect('my_books')
