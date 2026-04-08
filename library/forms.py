@@ -50,7 +50,7 @@ class BookForm(forms.ModelForm):
     def clean_isbn(self):
         isbn = self.cleaned_data.get('isbn', '').strip()
         if not isbn:
-            return None  # ISBN is optional
+            return None  
         if not isbn.isdigit():
             raise forms.ValidationError("ISBN must contain digits only.")
         if len(isbn) not in [10, 13]:

@@ -22,7 +22,7 @@ def register(request):
     if form.is_valid():
         user = form.save(commit=False)
         user.set_password(form.cleaned_data['password'])
-        user.role = 'student'  # enforce student role on self-registration
+        user.role = 'student'  
         user.save()
         messages.success(request, "Account created successfully. Please log in.")
         return redirect('login')
