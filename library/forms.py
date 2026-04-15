@@ -48,11 +48,10 @@ class BookForm(forms.ModelForm):
         return qty
 
     def clean_isbn(self):
-        isbn = self.cleaned_data.get('isbn', '').strip()
+        isbn = self.cleaned_data.get('isbn')
         if not isbn:
-            return None  
-        if not isbn.isdigit():
-            raise forms.ValidationError("ISBN must contain digits only.")
+            return isbn   
+        isbn = isbn.strip()
         if len(isbn) not in [10, 13]:
-            raise forms.ValidationError("ISBN must be exactly 10 or 13 digits.")
+            raise forms.ValidationError("ISBN must be 10 or 13 digits")
         return isbn
