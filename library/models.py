@@ -100,6 +100,18 @@ class IssueBook(models.Model):
         return 0
 
     @property
+    def current_fine(self):
+        """
+        Returns the effective fine for this issue.
+
+        For active issues, this yields the live overdue fine.
+        For returned issues, this returns the stored fine amount.
+        """
+        if self.return_date is not None:
+            return self.fine
+        return self.calculate_fine()
+
+    @property
     def is_overdue(self):
         """Returns True if the book is currently overdue and not yet returned."""
         if self.return_date:

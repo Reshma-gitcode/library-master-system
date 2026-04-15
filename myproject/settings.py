@@ -70,6 +70,9 @@ DATABASES = {
         'PASSWORD': 'password123',
         'HOST': 'localhost',
         'PORT': '3306',
+        'TEST': {
+            'NAME': os.environ.get('MYSQL_TEST_DB', 'library_test_db'),
+        },
     }
 }
 

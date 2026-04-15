@@ -26,6 +26,11 @@
               <i class="bi bi-clock me-1"></i>Due {{ i.due_date }}
               {% if i.is_overdue %}<span class="badge bg-danger ms-1">Overdue</span>{% endif %}
             </small>
+            {% if i.current_fine > 0 %}
+            <small class="text-warning fw-semibold">
+              <i class="bi bi-cash-stack me-1"></i>Fine ₹{{ i.current_fine }}
+            </small>
+            {% endif %}
           </div>
         </div>
         <form method="POST" action="{% url 'return_book' i.id %}" class="ms-3 flex-shrink-0">

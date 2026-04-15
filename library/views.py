@@ -156,7 +156,7 @@ def dashboard(request):
     context = {
         'total_books': Book.objects.count(),
         'issued_books': IssueBook.objects.filter(return_date=None).count(),
-        'total_fine': sum(i.fine for i in IssueBook.objects.exclude(fine=0)),
+        'total_fine': sum(i.current_fine for i in IssueBook.objects.all()),
         'overdue_count': overdue.count(),
         'top_books': Book.objects.annotate(total=Count('issuebook_set')).order_by('-total')[:5],
     }
