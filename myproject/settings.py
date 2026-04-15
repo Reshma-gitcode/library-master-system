@@ -14,8 +14,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-change-me-in-producti
 
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,testserver').split(',')
-
+ALLOWED_HOSTS = ['18.60.45.201']
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
