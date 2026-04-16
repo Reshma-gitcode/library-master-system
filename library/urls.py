@@ -10,6 +10,7 @@ from . import views
 urlpatterns = [
     # Catalogue
     path('',                                    views.book_list,          name='book_list'),
+    path('book/<int:book_id>/',                 views.book_detail,         name='book_detail'),
     path('add/',                                views.add_book,           name='add_book'),
     path('edit/<int:book_id>/',                 views.edit_book,          name='edit_book'),
     path('delete/<int:book_id>/',               views.delete_book,        name='delete_book'),
@@ -29,4 +30,5 @@ urlpatterns = [
 
     # Fine Management
     path('fine/paid/<int:issue_id>/',           views.mark_fine_paid,     name='mark_fine_paid'),
+    path('notification/read/<int:notification_id>/', views.mark_notification_read, name='mark_notification_read'),
 ]

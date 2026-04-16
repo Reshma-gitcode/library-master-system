@@ -5,7 +5,7 @@ Provides form validation for adding and editing books.
 """
 
 from django import forms
-from .models import Book
+from .models import Book, Review
 
 
 class BookForm(forms.ModelForm):
@@ -55,3 +55,27 @@ class BookForm(forms.ModelForm):
         if len(isbn) not in [10, 13]:
             raise forms.ValidationError("ISBN must be 10 or 13 digits")
         return isbn
+
+
+class ReviewForm(forms.ModelForm):
+    """
+    Form for submitting or updating a book review.
+
+    Validates:
+      - Rating is between 1 and 5
+      - Comment is optional
+    """
+
+    class Meta:
+        model = Review
+        fields = ['rating', 'comment']
+        widgets = {
+            'rating': forms.Select(attrs={'class': 'form-control'}, choices=[(i, f'{"★" * i} ({i})') for i in range(1, 6)]),
+            'comment': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Share your thoughts about this book...'}),
+        }
+
+    def clean_rating(self):
+        rating = self.cleaned_data.get('rating')
+        if rating not in range(1, 6):
+            raise forms.ValidationError("Rating must be between 1 and 5.")
+        return rating

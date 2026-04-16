@@ -5,11 +5,11 @@ from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.db import transaction
-from django.db.models import Count
+from django.db.models import Count, Avg
 from datetime import date
 
-from .models import Book, IssueBook, Reservation
-from .forms import BookForm
+from .models import Book, IssueBook, Reservation, Review, Notification
+from .forms import BookForm, ReviewForm
 
 
 def is_admin(user):
@@ -23,14 +23,36 @@ def _send_email(subject, body, recipient):
 @login_required
 def book_list(request):
     query = request.GET.get('q', '').strip()
-    books = Book.objects.all().order_by('title')
+    books = Book.objects.annotate(
+        avg_rating=Avg('reviews__rating'),
+        review_count=Count('reviews')
+    ).order_by('genre', 'title')
     if query:
         books = books.filter(title__icontains=query) | books.filter(author__icontains=query)
+    
+    # Compute genre counts from filtered books
+    genre_counts = books.values('genre').annotate(count=Count('id')).order_by('genre')
+    genre_counts_dict = {item['genre']: item['count'] for item in genre_counts}
+    
+    # Group books by genre for the page
+    books_page = books  # No pagination for now, as grouping changes it
+    genre_groups = {}
+    for book in books_page:
+        genre = book.genre
+        if genre not in genre_groups:
+            genre_groups[genre] = []
+        genre_groups[genre].append(book)
+    
     user_issued_ids = set(IssueBook.objects.filter(user=request.user, return_date=None).values_list('book_id', flat=True))
     user_reserved_ids = set(Reservation.objects.filter(user=request.user).values_list('book_id', flat=True))
-    paginator = Paginator(books, 9)
-    books_page = paginator.get_page(request.GET.get('page'))
-    return render(request, 'library/book_list.html', {'books': books_page, 'query': query, 'user_issued_ids': user_issued_ids, 'user_reserved_ids': user_reserved_ids})
+    
+    return render(request, 'library/book_list.html', {
+        'genre_groups': genre_groups,
+        'genre_counts': genre_counts_dict,
+        'query': query,
+        'user_issued_ids': user_issued_ids,
+        'user_reserved_ids': user_reserved_ids
+    })
 
 
 @login_required
@@ -48,9 +70,28 @@ def add_book(request):
 @user_passes_test(is_admin)
 def edit_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
+    old_quantity = book.quantity  # Track old quantity
     form = BookForm(request.POST or None, instance=book)
     if form.is_valid():
         form.save()
+        
+        # If book quantity increased from 0 to > 0, process reservations
+        if old_quantity == 0 and book.quantity > 0:
+            reservations = Reservation.objects.filter(book=book).order_by('reserved_at')
+            for reservation in reservations[:book.quantity]:
+                with transaction.atomic():
+                    b = Book.objects.select_for_update().get(id=book.id)
+                    if b.quantity > 0:
+                        IssueBook.objects.create(user=reservation.user, book=b)
+                        b.quantity -= 1
+                        b.save()
+                        reservation.delete()
+                        _send_email('Reserved Book Now Issued', f'Your reserved book "{b.title}" has been issued to you.', reservation.user.email)
+                        Notification.objects.create(
+                            user=reservation.user,
+                            message=f'Your reserved book "{b.title}" is now available and has been issued to you.'
+                        )
+        
         messages.success(request, "Book updated successfully.")
         return redirect('book_list')
     return render(request, 'library/add_book.html', {'form': form, 'edit': True})
@@ -116,6 +157,10 @@ def return_book(request, issue_id):
                 b.save()
                 reservation.delete()
                 _send_email('Reserved Book Now Issued', f'Your reserved book "{b.title}" has been issued to you.', reservation.user.email)
+                Notification.objects.create(
+                    user=reservation.user,
+                    message=f'Your reserved book "{b.title}" is now available and has been issued to you.'
+                )
     return redirect('my_books')
 
 
@@ -159,6 +204,7 @@ def dashboard(request):
         'total_fine': sum(i.current_fine for i in IssueBook.objects.all()),
         'overdue_count': overdue.count(),
         'top_books': Book.objects.annotate(total=Count('issuebook_set')).order_by('-total')[:5],
+        'notifications': Notification.objects.filter(user=request.user, is_read=False)[:5],
     }
     if is_admin(request.user):
         context['overdue_issues'] = overdue.select_related('user', 'book')[:10]
@@ -187,6 +233,52 @@ def my_reservations(request):
 
 
 @login_required
+def book_detail(request, book_id):
+    """
+    Display detailed book information, reviews, and allow eligible users to submit reviews.
+    """
+    book = get_object_or_404(Book, id=book_id)
+    reviews = Review.objects.filter(book=book).select_related('user')
+    avg_rating = reviews.aggregate(Avg('rating'))['rating__avg'] or 0
+    review_count = reviews.count()
+
+    # Check if user can review: student who has issued this book
+    can_review = (request.user.role == 'student' and
+                  IssueBook.objects.filter(user=request.user, book=book).exists())
+
+    if request.method == 'POST' and can_review:
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review, created = Review.objects.get_or_create(
+                user=request.user, book=book,
+                defaults={'rating': form.cleaned_data['rating'], 'comment': form.cleaned_data['comment']}
+            )
+            if not created:
+                review.rating = form.cleaned_data['rating']
+                review.comment = form.cleaned_data['comment']
+                review.save()
+            messages.success(request, "Review submitted successfully.")
+            return redirect('book_detail', book_id=book_id)
+    else:
+        form = ReviewForm()
+
+    user_issued_ids = set(IssueBook.objects.filter(user=request.user, return_date=None).values_list('book_id', flat=True))
+    user_reserved_ids = set(Reservation.objects.filter(user=request.user).values_list('book_id', flat=True))
+
+    context = {
+        'book': book,
+        'reviews': reviews,
+        'avg_rating': avg_rating,
+        'review_count': review_count,
+        'form': form if can_review else None,
+        'can_review': can_review,
+        'user_issued_ids': user_issued_ids,
+        'user_reserved_ids': user_reserved_ids,
+    }
+    return render(request, 'library/book_detail.html', context)
+
+
+@login_required
 @user_passes_test(is_admin)
 def mark_fine_paid(request, issue_id):
     issue = get_object_or_404(IssueBook, id=issue_id)
@@ -194,4 +286,13 @@ def mark_fine_paid(request, issue_id):
         issue.fine_paid = True
         issue.save()
         messages.success(request, f'Fine for "{issue.book.title}" marked as paid.')
+    return redirect('dashboard')
+
+
+@login_required
+def mark_notification_read(request, notification_id):
+    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+    if request.method == 'POST':
+        notification.is_read = True
+        notification.save()
     return redirect('dashboard')

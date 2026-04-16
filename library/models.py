@@ -149,3 +149,43 @@ class Reservation(models.Model):
 
     def __str__(self):
         return f"{self.user.username} reserved '{self.book.title}'"
+
+
+class Review(models.Model):
+    """
+    Represents a student's review and rating for a book they have borrowed.
+
+    Each student can submit one review per book.
+    """
+
+    user      = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
+    book      = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='reviews')
+    rating    = models.IntegerField(choices=[(i, i) for i in range(1, 6)], help_text="Rating from 1 to 5 stars")
+    comment   = models.TextField(blank=True, help_text="Optional review comment")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'book')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username} reviewed '{self.book.title}' ({self.rating} stars)"
+
+
+class Notification(models.Model):
+    """
+    Represents in-app notifications for users.
+
+    Used for reservation fulfillments and other alerts.
+    """
+
+    user      = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    message   = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read   = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Notification for {self.user.username}: {self.message[:50]}..."
