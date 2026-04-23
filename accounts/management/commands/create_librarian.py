@@ -19,6 +19,7 @@ Author: Library Dev Team
 
 from django.core.management.base import BaseCommand
 from accounts.models import User
+from accounts.emails import send_librarian_account_email
 
 
 class Command(BaseCommand):
@@ -39,7 +40,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR(f'"{ username }" already exists.'))
             return
 
-        User.objects.create_user(
+        user = User.objects.create_user(
             username=username,
             email=email,
             password=password,
@@ -47,4 +48,11 @@ class Command(BaseCommand):
             is_staff=True,  # grants access to Django admin panel
         )
 
-        self.stdout.write(self.style.SUCCESS(f"Librarian account \"{ username }\" created successfully."))
+        # Send welcome email with credentials
+        try:
+            send_librarian_account_email(user, password)
+            self.stdout.write(self.style.SUCCESS(f"Librarian account \"{ username }\" created successfully."))
+            self.stdout.write(self.style.SUCCESS(f"Welcome email sent to {email}"))
+        except Exception as e:
+            self.stdout.write(self.style.WARNING(f"Account created but failed to send email: {str(e)}"))
+

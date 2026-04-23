@@ -1,0 +1,54 @@
+<!-- Overdue Book Reminder Email -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #f39c12; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+        .content { background-color: #f9f9f9; padding: 20px; border: 1px solid #ddd; }
+        .footer { background-color: #ecf0f1; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
+        .alert-box { background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 15px 0; }
+        .info-box { background-color: #fff8e1; border-left: 4px solid #f39c12; padding: 15px; margin: 15px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⏰ Overdue Book Reminder</h1>
+        </div>
+        <div class="content">
+            <p>Hi {{ user.first_name|default:user.username }},</p>
+            
+            <div class="alert-box">
+                <h3 style="margin-top: 0;">⚠️ Overdue Notice</h3>
+                <p><strong>Book:</strong> {{ book.title }}</p>
+                <p><strong>Author:</strong> {{ book.author }}</p>
+                <p><strong>Due Date:</strong> {{ due_date|date:"d M Y" }}</p>
+                <p><strong>Days Overdue:</strong> {{ days_overdue }} days</p>
+            </div>
+            
+            <div class="info-box">
+                <h3 style="margin-top: 0;">💰 Accrued Fine</h3>
+                <p>You have an overdue fine of <strong>Rs. {{ total_fine }}</strong></p>
+                <p style="margin: 0; font-size: 14px; color: #7f8c8d;">
+                    (Rs. {{ fine_per_day }} per day × {{ days_overdue }} days)
+                </p>
+            </div>
+            
+            <p><strong>Please return the book as soon as possible</strong> to:</p>
+            <ul>
+                <li>Stop accruing additional fines</li>
+                <li>Make the book available for other students</li>
+                <li>Resume issuing books from the library</li>
+            </ul>
+            
+            <p>If you have any issues returning the book, please contact the library staff immediately.</p>
+        </div>
+        <div class="footer">
+            <p>© 2024 {{ site_name }}. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -7,8 +7,7 @@ Routes:
   /login/     → Django built-in login view
   /logout/    → Django built-in logout view
   /admin/     → Django admin panel
-
-Author: Library Dev Team
+  
 """
 
 from django.contrib import admin

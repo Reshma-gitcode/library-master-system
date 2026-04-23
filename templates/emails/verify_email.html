@@ -1,0 +1,41 @@
+<!-- Email Verification Template -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #3498db; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+        .content { background-color: #f9f9f9; padding: 20px; border: 1px solid #ddd; }
+        .footer { background-color: #ecf0f1; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
+        .btn { display: inline-block; background-color: #3498db; color: white; padding: 12px 24px; text-decoration: none; border-radius: 3px; }
+        .code-box { background-color: #f0f0f0; padding: 15px; text-align: center; font-size: 24px; font-family: monospace; letter-spacing: 5px; margin: 20px 0; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Verify Your Email</h1>
+        </div>
+        <div class="content">
+            <p>Hi {{ user.first_name|default:user.username }},</p>
+            <p>Thank you for signing up with {{ site_name }}! Please verify your email address to activate your account.</p>
+            
+            <p style="text-align: center; margin: 30px 0;">
+                <a href="{{ verification_link }}" class="btn">Verify Email</a>
+            </p>
+            
+            <p style="text-align: center; color: #7f8c8d; font-size: 14px; margin: 20px 0;">Or copy and paste this link:</p>
+            <p><code style="background-color: #f0f0f0; padding: 10px; display: block; word-break: break-all; font-size: 12px;">{{ verification_link }}</code></p>
+            
+            <p style="color: #7f8c8d; font-size: 14px; margin-top: 20px;">This link will expire in 24 hours.</p>
+            
+            <p><strong>If you didn't create this account,</strong> please ignore this email.</p>
+        </div>
+        <div class="footer">
+            <p>© 2024 {{ site_name }}. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!-- Review Reminder Email -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #2980b9; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+        .content { background-color: #f9f9f9; padding: 20px; border: 1px solid #ddd; }
+        .footer { background-color: #ecf0f1; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
+        .info-box { background-color: #ebf5fb; border-left: 4px solid #2980b9; padding: 15px; margin: 15px 0; }
+        .btn { display: inline-block; background-color: #2980b9; color: white; padding: 10px 20px; text-decoration: none; border-radius: 3px; margin-top: 10px; }
+        .stars { font-size: 24px; letter-spacing: 3px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⭐ Share Your Review</h1>
+        </div>
+        <div class="content">
+            <p>Hi {{ user.first_name|default:user.username }},</p>
+            <p>You recently returned a book. How was your reading experience?</p>
+            
+            <div class="info-box">
+                <h3 style="margin-top: 0;">📖 Book Details</h3>
+                <p><strong>Title:</strong> {{ book.title }}</p>
+                <p><strong>Author:</strong> {{ book.author }}</p>
+                <p><strong>Returned On:</strong> {{ return_date|date:"d M Y" }}</p>
+            </div>
+            
+            <p><strong>Your feedback helps other students!</strong></p>
+            <p>Leave a review and rating to help your classmates discover great books and make informed choices.</p>
+            
+            <div class="info-box">
+                <p style="text-align: center; margin: 0;">
+                    <div class="stars">⭐ ⭐ ⭐ ⭐ ⭐</div>
+                    <p>Rate this book on a scale of 1-5 stars</p>
+                    <p style="margin: 0; color: #7f8c8d; font-size: 14px;">And share your thoughts about the book</p>
+                </p>
+            </div>
+            
+            <p style="text-align: center;">
+                <a href="http://librarymaster.local/book/{{ book.id }}/" class="btn">Leave a Review</a>
+            </p>
+            
+            <p>If you don't want to leave a review, you can simply ignore this email. Thank you for using {{ site_name }}!</p>
+        </div>
+        <div class="footer">
+            <p>© 2024 {{ site_name }}. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

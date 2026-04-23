@@ -1,0 +1,53 @@
+<!-- Book Returned Confirmation Email -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #3498db; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+        .content { background-color: #f9f9f9; padding: 20px; border: 1px solid #ddd; }
+        .footer { background-color: #ecf0f1; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
+        .info-box { background-color: #ebf5fb; border-left: 4px solid #3498db; padding: 15px; margin: 15px 0; }
+        .fine-box { background-color: #fdeef4; border-left: 4px solid #e74c3c; padding: 15px; margin: 15px 0; }
+        .date { color: #7f8c8d; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✓ Book Returned</h1>
+        </div>
+        <div class="content">
+            <p>Hi {{ user.first_name|default:user.username }},</p>
+            <p>Your book return has been processed successfully.</p>
+            
+            <div class="info-box">
+                <h3 style="margin-top: 0;">📖 Book Details</h3>
+                <p><strong>Title:</strong> {{ book.title }}</p>
+                <p><strong>Author:</strong> {{ book.author }}</p>
+                <p><strong>Return Date:</strong> <span class="date">{{ return_date|date:"d M Y" }}</span></p>
+            </div>
+            
+            {% if fine > 0 %}
+            <div class="fine-box">
+                <h3 style="margin-top: 0;">⚠️ Pending Fine</h3>
+                <p><strong>Fine Amount:</strong> Rs. {{ fine }}</p>
+                <p>Please pay this fine before issuing another book.</p>
+            </div>
+            {% else %}
+            <div class="info-box">
+                <h3 style="margin-top: 0;">✓ No Fine</h3>
+                <p>Great! You returned the book on time. No fine applicable.</p>
+            </div>
+            {% endif %}
+            
+            <p>Thank you for using {{ site_name }}!</p>
+        </div>
+        <div class="footer">
+            <p>© 2024 {{ site_name }}. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

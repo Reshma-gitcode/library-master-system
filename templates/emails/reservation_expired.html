@@ -1,0 +1,48 @@
+<!-- Reservation Expired Email -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #95a5a6; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+        .content { background-color: #f9f9f9; padding: 20px; border: 1px solid #ddd; }
+        .footer { background-color: #ecf0f1; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
+        .alert-box { background-color: #ecf0f1; border-left: 4px solid #95a5a6; padding: 15px; margin: 15px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📅 Reservation Expired</h1>
+        </div>
+        <div class="content">
+            <p>Hi {{ user.first_name|default:user.username }},</p>
+            <p>Your reservation has expired and is no longer active.</p>
+            
+            <div class="alert-box">
+                <h3 style="margin-top: 0;">ℹ️ Reservation Details</h3>
+                <p><strong>Book:</strong> {{ book.title }}</p>
+                <p><strong>Author:</strong> {{ book.author }}</p>
+                <p><strong>Reason:</strong> Reservation expired due to inactivity</p>
+            </div>
+            
+            <p><strong>What happened?</strong></p>
+            <p>Your reservation was held for 3 days without collection. To ensure fair access for all students, expired reservations are automatically cancelled.</p>
+            
+            <p><strong>What can you do?</strong></p>
+            <ul>
+                <li>Reserve the book again if it's still unavailable</li>
+                <li>Check back regularly to see if the book is available</li>
+                <li>Contact the library staff if you need help</li>
+            </ul>
+            
+            <p>We look forward to helping you access the book soon!</p>
+        </div>
+        <div class="footer">
+            <p>© 2024 {{ site_name }}. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

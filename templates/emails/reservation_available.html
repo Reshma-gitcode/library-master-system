@@ -1,0 +1,56 @@
+<!-- Reserved Book Available Email -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #16a085; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+        .content { background-color: #f9f9f9; padding: 20px; border: 1px solid #ddd; }
+        .footer { background-color: #ecf0f1; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
+        .highlight-box { background-color: #d5f4e6; border-left: 4px solid #16a085; padding: 15px; margin: 15px 0; }
+        .info-box { background-color: #e8f8f5; border-left: 4px solid #1abc9c; padding: 15px; margin: 15px 0; }
+        .btn { display: inline-block; background-color: #16a085; color: white; padding: 12px 24px; text-decoration: none; border-radius: 3px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✨ Your Reserved Book is Available!</h1>
+        </div>
+        <div class="content">
+            <p>Hi {{ user.first_name|default:user.username }},</p>
+            <p>Great news! The book you reserved is now available and has been automatically issued to you.</p>
+            
+            <div class="highlight-box">
+                <h3 style="margin-top: 0;">✓ Book Issued Automatically</h3>
+                <p><strong>Title:</strong> {{ book.title }}</p>
+                <p><strong>Author:</strong> {{ book.author }}</p>
+            </div>
+            
+            <div class="info-box">
+                <h3 style="margin-top: 0;">📅 Issue Details</h3>
+                <p><strong>Issued Date:</strong> {{ issue_date|date:"d M Y" }}</p>
+                <p><strong>Due Date:</strong> {{ due_date|date:"d M Y" }}</p>
+                <p><strong>Loan Period:</strong> 7 days</p>
+                <p style="margin: 0; color: #7f8c8d; font-size: 14px;">
+                    Late fees: Rs. 5 per day
+                </p>
+            </div>
+            
+            <p><strong>Important:</strong></p>
+            <ul>
+                <li>Your reservation has been processed</li>
+                <li>The book is ready for collection from the library</li>
+                <li>Please return it on or before the due date</li>
+            </ul>
+            
+            <p>Thank you for using {{ site_name }}!</p>
+        </div>
+        <div class="footer">
+            <p>© 2024 {{ site_name }}. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
