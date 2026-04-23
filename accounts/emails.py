@@ -89,30 +89,29 @@ def send_account_verification_email(user, verification_link):
     )
 
 
-def send_librarian_account_email(user, temporary_password):
+def send_new_user_notification_email(new_user, existing_user):
     """
-    Send librarian account creation email with temporary credentials.
-    
+    Send email notification to an existing user about a new registration.
+
     Args:
-        user: Librarian user object
-        temporary_password: Temporary password for initial login
+        new_user: The newly registered User object
+        existing_user: The existing user to notify
     """
     context = {
-        'user': user,
-        'temporary_password': temporary_password,
-        'login_url': '/login/',
+        'new_user': new_user,
+        'existing_user': existing_user,
         'site_name': 'LibraryMaster',
     }
-    
-    subject = 'LibraryMaster - Your Librarian Account'
-    html_message = render_to_string('emails/librarian_account.html', context)
+
+    subject = f'New Student Joined LibraryMaster!'
+    html_message = render_to_string('emails/new_user_notification.html', context)
     plain_message = strip_tags(html_message)
-    
+
     send_mail(
         subject,
         plain_message,
         settings.EMAIL_HOST_USER,
-        [user.email],
+        [existing_user.email],
         html_message=html_message,
         fail_silently=True,
     )
