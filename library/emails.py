@@ -32,7 +32,7 @@ def send_book_issued_email(issue):
     send_mail(
         subject,
         plain_message,
-        settings.EMAIL_HOST_USER,
+        settings.DEFAULT_FROM_EMAIL,
         [issue.user.email],
         html_message=html_message,
         fail_silently=True,
@@ -61,7 +61,7 @@ def send_book_returned_email(issue):
     send_mail(
         subject,
         plain_message,
-        settings.EMAIL_HOST_USER,
+        settings.DEFAULT_FROM_EMAIL,
         [issue.user.email],
         html_message=html_message,
         fail_silently=True,
@@ -93,7 +93,7 @@ def send_overdue_reminder_email(issue, days_overdue):
     send_mail(
         subject,
         plain_message,
-        settings.EMAIL_HOST_USER,
+        settings.DEFAULT_FROM_EMAIL,
         [issue.user.email],
         html_message=html_message,
         fail_silently=True,
@@ -123,7 +123,7 @@ def send_fine_alert_email(issue):
     send_mail(
         subject,
         plain_message,
-        settings.EMAIL_HOST_USER,
+        settings.DEFAULT_FROM_EMAIL,
         [issue.user.email],
         html_message=html_message,
         fail_silently=True,
@@ -152,7 +152,7 @@ def send_book_reserved_email(reservation):
     send_mail(
         subject,
         plain_message,
-        settings.EMAIL_HOST_USER,
+        settings.DEFAULT_FROM_EMAIL,
         [reservation.user.email],
         html_message=html_message,
         fail_silently=True,
@@ -182,7 +182,7 @@ def send_reservation_available_email(reservation, issue):
     send_mail(
         subject,
         plain_message,
-        settings.EMAIL_HOST_USER,
+        settings.DEFAULT_FROM_EMAIL,
         [reservation.user.email],
         html_message=html_message,
         fail_silently=True,
@@ -209,7 +209,7 @@ def send_reservation_expired_email(reservation):
     send_mail(
         subject,
         plain_message,
-        settings.EMAIL_HOST_USER,
+        settings.DEFAULT_FROM_EMAIL,
         [reservation.user.email],
         html_message=html_message,
         fail_silently=True,
@@ -237,7 +237,7 @@ def send_review_reminder_email(issue):
     send_mail(
         subject,
         plain_message,
-        settings.EMAIL_HOST_USER,
+        settings.DEFAULT_FROM_EMAIL,
         [issue.user.email],
         html_message=html_message,
         fail_silently=True,

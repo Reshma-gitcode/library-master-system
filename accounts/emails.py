@@ -26,7 +26,7 @@ def send_registration_email(user):
     send_mail(
         subject,
         plain_message,
-        settings.EMAIL_HOST_USER,
+        settings.DEFAULT_FROM_EMAIL,
         [user.email],
         html_message=html_message,
         fail_silently=True,
@@ -54,7 +54,7 @@ def send_password_reset_email(user, reset_link):
     send_mail(
         subject,
         plain_message,
-        settings.EMAIL_HOST_USER,
+        settings.DEFAULT_FROM_EMAIL,
         [user.email],
         html_message=html_message,
         fail_silently=True,
@@ -82,7 +82,7 @@ def send_account_verification_email(user, verification_link):
     send_mail(
         subject,
         plain_message,
-        settings.EMAIL_HOST_USER,
+        settings.DEFAULT_FROM_EMAIL,
         [user.email],
         html_message=html_message,
         fail_silently=True,
@@ -110,7 +110,7 @@ def send_new_user_notification_email(new_user, existing_user):
     send_mail(
         subject,
         plain_message,
-        settings.EMAIL_HOST_USER,
+        settings.DEFAULT_FROM_EMAIL,
         [existing_user.email],
         html_message=html_message,
         fail_silently=True,

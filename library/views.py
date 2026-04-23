@@ -17,7 +17,7 @@ def is_admin(user):
 
 
 def _send_email(subject, body, recipient):
-    send_mail(subject, body, settings.EMAIL_HOST_USER, [recipient], fail_silently=True)
+    send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [recipient], fail_silently=True)
 
 
 @login_required
